@@ -1,0 +1,291 @@
+// Підключаємо/створюємо базу
+// use my_test_db
+//
+// Додаємо один об'єкт
+// db.users.insertOne({name: 'Max', age: 15})
+//
+// Знаходимо/відображаємо вск
+// db.users.find()
+//
+// Додаємо декілька об'єктів
+// db.users.insertMany(
+//     [{name: 'Masha', age: 20},
+//     {name: 'Anton', age: 35},
+//     {name: 'Kokos', age: 3}]
+// )
+//
+// Повністю видаляємо колекцію
+// db.users.drop()
+//
+// Приклад додаємо декілька об'єктів
+db.users.insertMany([
+    {
+        name: 'Alex', age: 25, gender: 'male', address: {
+            city: 'Lviv',
+            street: 'Chornovola',
+            house: 25,
+            flat: 12
+        },
+        parents: [
+            'Vasia',
+            'Masha',
+        ],
+        rating: 5,
+        studying: ['js', 'java']
+    },
+    {
+        name: 'Natalii', age: 29, gender: 'female', address: {
+            city: 'Lviv',
+            street: 'Marko Vovchok',
+            house: 45,
+            flat: 45
+        },
+        parents: [
+            'Igor',
+            'Nina',
+        ],
+        rating: 4,
+        studying: ['python', 'java', 'css']
+    },
+    {
+        name: 'Alexsandr', age: 34, gender: 'male', address: {
+            city: 'Lviv',
+            street: 'Kitayska',
+            house: 10,
+            flat: 5
+        },
+        parents: [
+            'Petro',
+            'Alina',
+        ],
+        rating: 2,
+        studying: ['js', 'java', 'html']
+    },
+    {
+        name: 'Sergii', age: 12, gender: 'male',
+        parents: [
+            'Anton',
+            'Tamara',
+        ],
+        rating: 4,
+        studying: ['node', 'java', 'css', 'mongo', 'mysql']
+    },
+    {
+        name: 'Igor', age: 45, gender: 'male', address: {
+            city: 'Kyiv',
+            street: 'Shevchenko',
+            house: 100,
+            flat: 66
+        },
+        parents: [
+            'Igor',
+            'Igor',
+        ],
+        rating: 5,
+        studying: ['java', 'node']
+    },
+    {
+        name: 'Eva', age: 26, gender: 'female', address: {
+            city: 'Odessa',
+            street: 'Derebasovska',
+            house: 4,
+        },
+        parents: [
+            'Masha'
+        ],
+        rating: 2,
+        studying: ['js']
+    },
+    {
+        name: 'Kira', age: 49, gender: 'female', address: {
+            city: 'Uzgorod',
+            street: 'Doroshenka',
+            house: 201,
+            flat: 1
+        },
+        parents: [
+            'Vitaliy',
+            'Olha',
+        ],
+        rating: 2,
+        studying: ['java']
+    },
+    {
+        name: 'Vova', age: 16, gender: 'male', address: {
+            city: 'Uzgorod',
+            street: 'Bethoven',
+            house: 2,
+            flat: 145
+        },
+        rating: 3
+    }
+
+])
+
+// Приклад додаємо інший труктурний об'єкт
+db.users.insertOne({name: 'FIAT', year: 2011})
+
+// Приклад знаходимо об'єкт по декількох ключах/властивостях. Також відображаємо потрібні поля
+db.users.find({gender: 'female', rating: 2}, {name: 1, age: true})
+// Знаходимо за id тут id це об'єкт
+db.users.find({_id: ObjectId('69144cabff60fa294cdc8923')})
+
+// Знаходимо з оператором або
+db.users.find({
+    $or: [
+        {rating: 2},
+        {rating: 5},
+        {age: 18}
+    ]
+})
+// Знаходимо з оператором і
+db.users.find({
+    $and: [
+        {gender: 'female'},
+        {age: 26}
+    ]
+})
+
+// Знаходимо по властивості з конкретними даними
+db.users.find({age: {$in: [18, 20, 26, 99.25, 4, 13, 12]}})
+
+// Знаходимо що не включає наступні властивості
+db.users.find({
+    age: {
+        $not: {
+            $in: [18, 20, 26, 12, 13,]
+        }
+    }
+})
+
+// Знаходимо більше ніж
+
+db.users.find({rating: {$gt: 2}})
+
+// Знаходимо більше або рівне
+
+db.users.find({rating: {$gte: 2}})
+
+// Знаходимо менше ніж
+
+db.users.find({rating: {$lt: 4}})
+
+// Знаходимо менше або рівне
+
+db.users.find({rating: {$lte: 4}})
+
+// Знаходимо не дорівнює
+
+db.users.find({rating: {$ne: 4}})
+
+// знаходимо що дорівнює
+
+db.users.find({rating: {$eq: 4}})
+
+// Знаходимо наприклад ім'я що починається на А
+
+db.users.find({ name: /^a/})
+db.users.find({ name: /^A/})
+
+// В такому випадку ігнорується регістр
+db.users.find({ name: /^a/i})
+
+// Знаходимо наприклад ім'я що закінчується на a, $ - кінець строки
+
+db.users.find({ name: /a$/i})
+
+// Знаходимо на будь якій позиції щоб була потрібна буква . - будь які символи * - від 0 і бліьше.
+// Все рівно скільки символів перед l і після
+db.users.find({ name: /.*l.*/i})
+
+// Знаходимо яким буде наприклад 3 символ
+db.users.find({ name: /.{2}t/i})
+
+
+// Знаходимо починається на і закінчується на
+
+db.users.find({name: /^k.*a/i})
+
+// Сортування 1 - від меншого до більшого
+
+db.users.find().sort({rating: 1})
+
+// навпаки від більшого до меншого
+db.users.find().sort({rating: -1})
+
+// Сортуємо по декількох полям
+
+db.users.find().sort({rating: -1, age: -1})
+
+// Ліміти, показати наприклад тількі один запис
+
+db.users.find().sort({rating: -1}).limit(1)
+
+// Ліміти та пропуски
+
+db.users.find().sort({rating: -1}).limit(2).skip(2)
+
+db.users.find()
+
+// Заміни, апдейти
+
+db.users.updateOne(
+    {_id: ObjectId("69144cabff60fa294cdc891d")},
+    {$set: {gender: 'animal'}}
+)
+
+db.users.updateMany(
+    {gender: 'male'},
+    {$set: {gender: 'animal'}}
+)
+
+// Додати нове поле
+
+db.users.updateOne(
+    {_id: ObjectId("69144cabff60fa294cdc891d")},
+    {$set: {stutus: true}}
+)
+
+// Видалити поле
+
+db.users.updateOne(
+    {_id: ObjectId("69144cabff60fa294cdc891d")},
+    {$unset: {stutus: true}}
+)
+
+// Чи є якесь поле 1-є, 0-немає
+
+db.users.find({parents: {$exists: 0}})
+
+// Шукаємо по кількості елементів в массиві
+
+db.users.find({parents: {$size: 1}})
+
+// Шукаємо по массиву
+
+db.users.find({studying: 'java'})
+
+// Додавання інформації
+
+db.users.updateOne(
+    {_id: ObjectId("69144cabff60fa294cdc891d")},
+    {$push: {studying: 'python'}}
+)
+db.users.find()
+
+// ВИдалити інформацію
+
+db.users.updateOne(
+    {_id: ObjectId("69144cabff60fa294cdc891d")},
+    {$pull: {parents: 'Masha'}}
+)
+db.users.find()
+
+// Шукати по позиції
+
+db.users.find({'studying.1': 'java'})
+
+// Видаляємо об'єкти
+
+db.users.deleteOne({_id: ObjectId('69158f32f1ae5b054d479305')})
+
