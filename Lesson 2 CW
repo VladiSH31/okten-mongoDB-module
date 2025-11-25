@@ -1,7 +1,3 @@
-db.teacher.find();
-
-db.students.find()
-
 db.students.insertMany(
     [
         {
@@ -179,7 +175,7 @@ db.teacher.aggregate([
     {
         $group: {
             _id: '$lesson',
-            lessonCount: {$sum:1},
+            lessonCount: {$sum: 1},
             min: {$min: '$payment'},
             max: {$max: '$payment'},
             sum: {$sum: '$payment'},
@@ -196,7 +192,7 @@ db.teacher.aggregate([
     {
         $group: {
             _id: '$lesson',
-            lessonCount: {$sum:1}
+            lessonCount: {$sum: 1}
         }
     },
     // Сортування
@@ -206,14 +202,82 @@ db.teacher.aggregate([
             lessonCount: -1
         }
     },
+    // Додавання полей
     {
         $addFields: {
             lesson: '$_id'
         }
     },
+    // Приховання полей
     {
         $project: {
             _id: 0
         }
+    }
+]);
+
+db.teacher.aggregate([
+
+    // З'єднання з іншою таблицею
+    {
+        $lookup: {
+            from: 'students',
+            localField: 'class_curator',
+            foreignField: 'class',
+            as: 'myStudents'
+        }
+    },
+    {
+        $sort: {
+            class_curator: 1
+        }
+    },
+    {
+        $skip: 2
+    },
+    {
+        $limit: 2
+    }
+])
+// Робити пошуки
+
+db.teacher.aggregate([
+
+    // З'єднання з іншою таблицею
+    {
+        $lookup: {
+            from: 'students',
+            localField: 'class_curator',
+            foreignField: 'class',
+            as: 'myStudents'
+        }
+    },
+    // ключове слово для пошуку
+    {
+        $match: {
+            // 'myStudents.name': 'Ivan'
+            // 'myStudents.parents.profession': 'doctor'
+            class_curator: {$gt: 5}
+        }
+    },
+    {
+        $sort: {
+            class_curator: 1
+        }
+    },
+    // Роздрібнювання масивів на окремі об'єкти
+    {
+        $unwind: '$myStudents'
+    },
+    {
+        $unwind: '$myStudents.parents'
+    },
+    {
+        $match: {
+            'myStudents.parents.profession': 'doctor'
+        }
+    },
+    {
+        $count: 'DoctorsCount'
     }
 ])
